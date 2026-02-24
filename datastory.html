@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Behind the Screens — IITM Discourse Community</title>
+<style>
+  /* ── Reset & Base ──────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0d1117;
+    --surface:   #161b22;
+    --surface2:  #1c2128;
+    --border:    #30363d;
+    --accent1:   #4361EE;
+    --accent2:   #7209B7;
+    --accent3:   #F72585;
+    --accent4:   #4CC9F0;
+    --accent5:   #4895EF;
+    --green:     #3fb950;
+    --yellow:    #d29922;
+    --text:      #e6edf3;
+    --muted:     #8b949e;
+    --radius:    14px;
+    --shadow:    0 8px 32px rgba(0,0,0,.45);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-size: 16px;
+    line-height: 1.75;
+  }
+
+  /* ── Layout ─────────────────────────────────────────────── */
+  .page-wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px 80px; }
+
+  /* ── Hero ───────────────────────────────────────────────── */
+  .hero {
+    position: relative;
+    min-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    overflow: hidden;
+    padding: 60px 24px;
+  }
+  .hero-bg {
+    position: absolute; inset: 0; z-index: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 30%,  rgba(67,97,238,.28) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 70%,  rgba(114,9,183,.24) 0%, transparent 60%),
+      radial-gradient(ellipse 55% 45% at 50% 10%,  rgba(247,37,133,.18) 0%, transparent 55%),
+      var(--bg);
+  }
+  .hero-grid {
+    position: absolute; inset: 0; z-index: 0;
+    background-image:
+      linear-gradient(rgba(67,97,238,.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(67,97,238,.07) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+  .hero-content { position: relative; z-index: 1; }
+
+  .hero-kicker {
+    display: inline-block;
+    background: linear-gradient(90deg, var(--accent1), var(--accent2));
+    color: #fff;
+    font-size: .78rem;
+    font-weight: 700;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+    padding: 5px 16px;
+    border-radius: 99px;
+    margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -.02em;
+    background: linear-gradient(135deg, #fff 0%, var(--accent4) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 20px;
+  }
+  .hero-sub {
+    font-size: 1.15rem;
+    color: var(--muted);
+    max-width: 640px;
+    margin: 0 auto 40px;
+  }
+  .hero-meta {
+    display: flex; flex-wrap: wrap; gap: 16px;
+    justify-content: center;
+  }
+  .hero-badge {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 7px 20px;
+    font-size: .88rem;
+    color: var(--muted);
+  }
+  .hero-badge strong { color: var(--text); }
+  .scroll-hint {
+    position: absolute;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+    color: var(--muted);
+    font-size: .8rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    animation: fadeUp 2.4s ease infinite;
+  }
+  .scroll-hint::after {
+    content: '';
+    display: block;
+    width: 1px; height: 36px;
+    background: linear-gradient(180deg, var(--muted), transparent);
+  }
+  @keyframes fadeUp {
+    0%,100% { opacity:.5; transform: translateX(-50%) translateY(0); }
+    50%      { opacity:.9; transform: translateX(-50%) translateY(-6px); }
+  }
+
+  /* ── Stat Cards Row ─────────────────────────────────────── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 16px;
+    margin: 56px 0 32px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 20px;
+    text-align: center;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .stat-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+  .stat-card .val {
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent4), var(--accent1));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: block;
+    line-height: 1.1;
+    margin-bottom: 6px;
+  }
+  .stat-card .lbl {
+    color: var(--muted);
+    font-size: .82rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+  }
+
+  /* ── Section ────────────────────────────────────────────── */
+  section { margin: 72px 0; }
+  .section-label {
+    display: flex; align-items: center; gap: 12px;
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+  }
+  .section-label::before {
+    content: '';
+    display: block;
+    width: 28px; height: 2px;
+    background: linear-gradient(90deg, var(--accent1), var(--accent2));
+    border-radius: 99px;
+  }
+  .section-title {
+    font-size: clamp(1.6rem, 2.8vw, 2.4rem);
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -.015em;
+    margin-bottom: 16px;
+  }
+  .section-title span {
+    background: linear-gradient(90deg, var(--accent1), var(--accent3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .section-body { color: var(--muted); max-width: 780px; line-height: 1.9; }
+  .section-body p { margin-bottom: 18px; }
+  .section-body strong { color: var(--text); }
+
+  /* ── Chapter divider ────────────────────────────────────── */
+  .chapter-num {
+    font-size: 5rem;
+    font-weight: 900;
+    line-height: 1;
+    background: linear-gradient(135deg, var(--accent1) 0%, transparent 80%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    opacity: .35;
+    margin-bottom: -10px;
+    display: block;
+  }
+
+  /* ── Charts ─────────────────────────────────────────────── */
+  .chart-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+    gap: 24px;
+    margin-top: 36px;
+  }
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: transform .2s;
+  }
+  .chart-card:hover { transform: translateY(-3px); }
+  .chart-card img { width: 100%; display: block; }
+  .chart-caption {
+    padding: 12px 16px;
+    font-size: .82rem;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+  .chart-full { grid-column: 1 / -1; }
+
+  /* ── Insight Blocks ─────────────────────────────────────── */
+  .insight-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 32px;
+  }
+  .insight-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .insight-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .insight-card.blue::before  { background: linear-gradient(90deg, var(--accent1), var(--accent5)); }
+  .insight-card.purple::before{ background: linear-gradient(90deg, var(--accent2), var(--accent1)); }
+  .insight-card.pink::before  { background: linear-gradient(90deg, var(--accent3), var(--accent2)); }
+  .insight-card.teal::before  { background: linear-gradient(90deg, var(--accent4), var(--accent5)); }
+  .insight-card.green::before { background: linear-gradient(90deg, var(--green), var(--accent4)); }
+
+  .insight-icon { font-size: 2rem; margin-bottom: 12px; display: block; }
+  .insight-card h3 {
+    font-size: 1rem; font-weight: 700; margin-bottom: 10px; color: var(--text);
+  }
+  .insight-card p { font-size: .9rem; color: var(--muted); line-height: 1.7; }
+  .insight-card .big-num {
+    font-size: 2.2rem;
+    font-weight: 900;
+    line-height: 1;
+    margin: 12px 0 6px;
+  }
+  .blue  .big-num { color: var(--accent5); }
+  .purple .big-num { color: #9d4edd; }
+  .pink  .big-num { color: var(--accent3); }
+  .teal  .big-num { color: var(--accent4); }
+  .green .big-num { color: var(--green); }
+
+  /* ── Corr Badge ─────────────────────────────────────────── */
+  .corr-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-top: 28px;
+  }
+  .corr-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 20px;
+    text-align: center;
+  }
+  .corr-card .pair { color: var(--muted); font-size: .83rem; margin-bottom: 8px; }
+  .corr-card .val-r {
+    font-size: 2.2rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--accent4), var(--accent1));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .corr-card .interp {
+    margin-top: 6px;
+    font-size: .8rem;
+    color: var(--green);
+    font-weight: 600;
+  }
+
+  /* ── Persona Cards ──────────────────────────────────────── */
+  .persona-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 20px;
+    margin-top: 32px;
+  }
+  .persona-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 22px;
+    text-align: center;
+  }
+  .persona-icon {
+    width: 60px; height: 60px; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 14px;
+  }
+  .persona-icon.p1 { background: linear-gradient(135deg, var(--accent1), var(--accent2)); }
+  .persona-icon.p2 { background: linear-gradient(135deg, var(--accent4), var(--accent5)); }
+  .persona-icon.p3 { background: linear-gradient(135deg, var(--accent3), var(--accent2)); }
+  .persona-icon.p4 { background: linear-gradient(135deg, var(--yellow), #e36209); }
+
+  .persona-card h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 6px; }
+  .persona-card .count {
+    font-size: 2rem; font-weight: 900;
+    background: linear-gradient(135deg, var(--accent4), var(--accent1));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: block;
+  }
+  .persona-card .pct {
+    color: var(--muted); font-size: .82rem; margin-bottom: 10px;
+  }
+  .persona-card p { font-size: .85rem; color: var(--muted); line-height: 1.6; }
+
+  /* ── Power Users Table ──────────────────────────────────── */
+  .leaderboard {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-top: 32px;
+  }
+  .lb-header {
+    display: grid;
+    grid-template-columns: 40px 1fr 90px 90px 90px 90px;
+    padding: 12px 20px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    font-size: .78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--muted);
+    gap: 8px;
+  }
+  .lb-row {
+    display: grid;
+    grid-template-columns: 40px 1fr 90px 90px 90px 90px;
+    padding: 14px 20px;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+    align-items: center;
+    transition: background .15s;
+    font-size: .9rem;
+  }
+  .lb-row:last-child { border-bottom: none; }
+  .lb-row:hover { background: var(--surface2); }
+  .lb-rank {
+    font-weight: 800;
+    font-size: 1rem;
+  }
+  .lb-rank.gold   { color: #ffd700; }
+  .lb-rank.silver { color: #c0c0c0; }
+  .lb-rank.bronze { color: #cd7f32; }
+  .lb-rank.rest   { color: var(--muted); }
+  .lb-uname { font-weight: 600; color: var(--text); }
+  .lb-role  { font-size: .75rem; color: var(--accent4); }
+  .lb-num   { text-align: right; color: var(--muted); }
+  .lb-num strong { color: var(--text); }
+
+  /* ── Pull quote ─────────────────────────────────────────── */
+  .pull-quote {
+    border-left: 4px solid var(--accent1);
+    background: var(--surface);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 24px 28px;
+    margin: 36px 0;
+    font-size: 1.12rem;
+    font-style: italic;
+    color: var(--text);
+    line-height: 1.8;
+  }
+  .pull-quote footer {
+    margin-top: 10px;
+    font-size: .85rem;
+    color: var(--muted);
+    font-style: normal;
+  }
+
+  /* ── Trust-level visual ─────────────────────────────────── */
+  .trust-bars { margin-top: 28px; display: flex; flex-direction: column; gap: 12px; }
+  .trust-row  { display: flex; align-items: center; gap: 14px; }
+  .trust-lbl  { width: 160px; font-size: .88rem; color: var(--muted); flex-shrink: 0; }
+  .trust-track {
+    flex: 1;
+    background: var(--surface2);
+    border-radius: 99px;
+    height: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .trust-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 1s ease;
+  }
+  .trust-val  { width: 80px; text-align: right; font-size: .88rem; font-weight: 700; }
+
+  /* ── Conclusion banner ──────────────────────────────────── */
+  .conclusion {
+    background: linear-gradient(135deg, rgba(67,97,238,.15), rgba(114,9,183,.15));
+    border: 1px solid rgba(67,97,238,.3);
+    border-radius: calc(var(--radius) * 1.5);
+    padding: 48px;
+    text-align: center;
+    margin-top: 72px;
+  }
+  .conclusion h2 {
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    font-weight: 800;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, var(--accent4), var(--accent1));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .conclusion p { color: var(--muted); max-width: 720px; margin: 0 auto 28px; font-size: 1.05rem; }
+  .conclusion-stats {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; margin-top: 28px;
+  }
+  .c-stat {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 28px;
+    font-size: .9rem;
+  }
+  .c-stat .cv { font-size: 1.6rem; font-weight: 800; color: var(--accent4); display: block; }
+
+  /* ── Footer ─────────────────────────────────────────────── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 28px 0;
+    text-align: center;
+    font-size: .82rem;
+    color: var(--muted);
+  }
+  footer strong { color: var(--text); }
+
+  /* ── Utility ────────────────────────────────────────────── */
+  .mt-4 { margin-top: 16px; }
+  .mt-8 { margin-top: 32px; }
+  .highlight { color: var(--accent4); font-weight: 700; }
+  .tag {
+    display: inline-block;
+    background: rgba(67,97,238,.18);
+    color: var(--accent5);
+    border: 1px solid rgba(67,97,238,.3);
+    border-radius: 99px;
+    font-size: .75rem;
+    font-weight: 600;
+    padding: 2px 12px;
+    margin: 2px;
+  }
+
+  @media (max-width: 640px) {
+    .chart-grid { grid-template-columns: 1fr; }
+    .lb-header, .lb-row { grid-template-columns: 32px 1fr 70px 70px; }
+    .lb-header :nth-child(n+5), .lb-row :nth-child(n+5) { display: none; }
+    .conclusion { padding: 32px 20px; }
+    .section-title { font-size: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════  HERO  -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <span class="hero-kicker">IITM Discourse · Data Story · Feb 2026</span>
+    <h1>Behind the Screens:<br>The Pulse of the IITM<br>Discourse Community</h1>
+    <p class="hero-sub">
+      A data-driven narrative of 500 students who turned an online forum
+      into a living, breathing ecosystem of peer-to-peer learning.
+    </p>
+    <div class="hero-meta">
+      <span class="hero-badge"><strong>500</strong> Users Analysed</span>
+      <span class="hero-badge"><strong>22,059</strong> Posts Created</span>
+      <span class="hero-badge"><strong>8,128 hrs</strong> of Reading</span>
+      <span class="hero-badge"><strong>1,502</strong> Solutions Shared</span>
+    </div>
+  </div>
+  <div class="scroll-hint">scroll</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════  PAGE CONTENT  -->
+<div class="page-wrap">
+
+  <!-- ── Macro Numbers ── -->
+  <div class="stats-row">
+    <div class="stat-card"><span class="val">500</span><span class="lbl">Total Users</span></div>
+    <div class="stat-card"><span class="val">44.1</span><span class="lbl">Avg Posts / User</span></div>
+    <div class="stat-card"><span class="val">16.3 hrs</span><span class="lbl">Avg Read Time</span></div>
+    <div class="stat-card"><span class="val">158.5</span><span class="lbl">Avg Days Visited</span></div>
+    <div class="stat-card"><span class="val">3,372</span><span class="lbl">Avg Posts Read</span></div>
+    <div class="stat-card"><span class="val">1,502</span><span class="lbl">Total Solutions</span></div>
+  </div>
+
+  <!-- ════════════════════════════════════════  CHAPTER 1 · THE HOOK  -->
+  <section id="hook">
+    <div class="section-label">Chapter One</div>
+    <span class="chapter-num">01</span>
+    <h2 class="section-title">The Digital Town Square of <span>IITM</span></h2>
+    <div class="section-body">
+      <p>
+        Imagine thousands of students scattered across India — juggling assignments, deadlines,
+        and a degree that arrives through a screen instead of a campus gate.
+        For the students of IIT Madras's Online Degree Programme, the Discourse forum is not a
+        supplement to education; it <em>is</em> the education infrastructure.
+        It is the corridor conversation, the hostel-room debate, the library whisper — all at once.
+      </p>
+      <p>
+        This story peers behind that screen. Using profile and activity data for
+        <strong>500 users</strong>, we map the invisible social architecture of this community:
+        who drives it, who benefits from it, and what the numbers reveal about the culture
+        of peer learning at IITM.
+      </p>
+    </div>
+
+    <div class="pull-quote">
+      "Across 500 accounts, this community collectively spent <strong>8,128 hours reading</strong>,
+       authored <strong>27,097 posts and topics</strong>, dispensed <strong>17,752 likes</strong>,
+       and solved problems <strong>1,502 times</strong> — all without a single physical classroom."
+      <footer>— Summary Statistics, IITM Discourse Dataset (Feb 2026)</footer>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════  CHAPTER 2 · THE LANDSCAPE  -->
+  <section id="landscape">
+    <div class="section-label">Chapter Two</div>
+    <span class="chapter-num">02</span>
+    <h2 class="section-title">The <span>Landscape</span> — Who Are These 500?</h2>
+    <div class="section-body">
+      <p>
+        Before we chase patterns, we need to understand the terrain. The dataset captures 500
+        accounts ranked partly by their <em>gamification score</em> — a proxy for overall platform
+        engagement provided by the Discourse engine itself.
+      </p>
+      <p>
+        The first thing that jumps out is the <strong>trust-level distribution</strong>.
+        Discourse assigns users a trust ladder from 0 (newcomer) to 4 (leader).
+        An overwhelming majority — <strong>73.4% (367 users)</strong> — sit at
+        <em>Trust Level 1 (Basic)</em>, having opened topics, read a handful of posts, and
+        spent some time on the platform. A further <strong>25.6% (128 users)</strong> are still at
+        Level 0, which typically means recent joiners or very infrequent visitors.
+        Only <strong>5 users</strong> have climbed to Level 2 or above, a testament to how rare
+        truly sustained, community-building engagement is.
+      </p>
+    </div>
+
+    <!-- Trust-level visual bars -->
+    <div class="trust-bars">
+      <div class="trust-row">
+        <span class="trust-lbl">Basic (Level 1)</span>
+        <div class="trust-track"><div class="trust-fill" style="width:73.4%;background:linear-gradient(90deg,#4361EE,#4895EF)"></div></div>
+        <span class="trust-val" style="color:#4895EF">367 · 73.4%</span>
+      </div>
+      <div class="trust-row">
+        <span class="trust-lbl">New User (Level 0)</span>
+        <div class="trust-track"><div class="trust-fill" style="width:25.6%;background:linear-gradient(90deg,#7209B7,#560BAD)"></div></div>
+        <span class="trust-val" style="color:#9d4edd">128 · 25.6%</span>
+      </div>
+      <div class="trust-row">
+        <span class="trust-lbl">Member (Level 2)</span>
+        <div class="trust-track"><div class="trust-fill" style="width:0.8%;background:linear-gradient(90deg,#F72585,#7209B7)"></div></div>
+        <span class="trust-val" style="color:#F72585">4 · 0.8%</span>
+      </div>
+      <div class="trust-row">
+        <span class="trust-lbl">Leader (Level 4)</span>
+        <div class="trust-track"><div class="trust-fill" style="width:0.2%;background:linear-gradient(90deg,#ffd700,#e36209)"></div></div>
+        <span class="trust-val" style="color:#ffd700">1 · 0.2%</span>
+      </div>
+    </div>
+
+    <div class="chart-grid mt-8">
+      <div class="chart-card">
+        <img src="output/trust_level_dist.png" alt="Trust Level Distribution" loading="lazy"/>
+        <p class="chart-caption">Fig 1 — User count by Discourse trust level. Basic (Level 1) dominates the dataset.</p>
+      </div>
+      <div class="chart-card">
+        <img src="output/post_distribution.png" alt="Post Count Distribution" loading="lazy"/>
+        <p class="chart-caption">Fig 2 — Post count distribution (log scale). A classic long-tail: most write few, a handful write thousands.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════  CHAPTER 3 · SEGMENTS  -->
+  <section id="segments">
+    <div class="section-label">Chapter Three</div>
+    <span class="chapter-num">03</span>
+    <h2 class="section-title">Four Faces of the <span>Forum</span></h2>
+    <div class="section-body">
+      <p>
+        Not everyone shows up to a forum for the same reason. Using posting behaviour and
+        engagement signals, we can sketch four distinct personas that together account for
+        all 500 users.
+      </p>
+    </div>
+
+    <div class="persona-grid">
+      <!-- Power Users -->
+      <div class="persona-card">
+        <div class="persona-icon p1">🏆</div>
+        <h3>The Power Users</h3>
+        <span class="count">25</span>
+        <span class="pct">5.0% of the community</span>
+        <p>
+          Top 5% by a composite engagement index (posts + likes + days + solutions).
+          They are the forum's backbone — prolific writers, generous helpers, and consistently present.
+        </p>
+      </div>
+      <!-- Contributors -->
+      <div class="persona-card">
+        <div class="persona-icon p2">✏️</div>
+        <h3>The Contributors</h3>
+        <span class="count">399</span>
+        <span class="pct">79.8% of the community</span>
+        <p>
+          The vast majority. They ask questions, share answers, and keep the conversation alive.
+          The forum's content is built almost entirely on their shoulders.
+        </p>
+      </div>
+      <!-- Silent Readers -->
+      <div class="persona-card">
+        <div class="persona-icon p3">📖</div>
+        <h3>The Silent Readers</h3>
+        <span class="count">37</span>
+        <span class="pct">7.4% of the community</span>
+        <p>
+          They visited, they read, they learnt — but never posted or liked anything.
+          Invisible beneficiaries of the community's labour.
+        </p>
+      </div>
+      <!-- Lurkers -->
+      <div class="persona-card">
+        <div class="persona-icon p4">👀</div>
+        <h3>The Lurkers</h3>
+        <span class="count">64</span>
+        <span class="pct">12.8% of the community</span>
+        <p>
+          Zero posts, zero topics, zero likes given. Present on the surface, invisible beneath it.
+          Some are brand-new; others chose to learn entirely in silence.
+        </p>
+      </div>
+    </div>
+
+    <div class="chart-grid mt-8">
+      <div class="chart-card">
+        <img src="output/engagement_segments.png" alt="Community Engagement Segments" loading="lazy"/>
+        <p class="chart-caption">Fig 3 — Four community personas by engagement behaviour.</p>
+      </div>
+      <div class="chart-card">
+        <img src="output/top15_power_users.png" alt="Top 15 Power Users" loading="lazy"/>
+        <p class="chart-caption">Fig 4 — Top 15 users by composite engagement score (posts × likes × days × solutions).</p>
+      </div>
+    </div>
+
+    <div class="pull-quote">
+      "79.8% of users are Contributors — but the top 25 Power Users account for a
+       disproportionate share of the forum's solved problems and liked answers.
+       This is the <em>Pareto principle playing out in real time.</em>"
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════  CHAPTER 4 · INSIGHTS  -->
+  <section id="insights">
+    <div class="section-label">Chapter Four</div>
+    <span class="chapter-num">04</span>
+    <h2 class="section-title">The <span>Hidden Signals</span> in the Data</h2>
+    <div class="section-body">
+      <p>
+        Raw counts tell one story; correlations tell another. The table below captures
+        the statistical relationships between key engagement metrics — and several of them
+        are remarkably strong.
+      </p>
+    </div>
+
+    <!-- Correlation callouts -->
+    <div class="corr-grid">
+      <div class="corr-card">
+        <p class="pair">Posts Created ↔ Likes Received</p>
+        <div class="val-r">r = 0.96</div>
+        <p class="interp">Very Strong positive</p>
+      </div>
+      <div class="corr-card">
+        <p class="pair">Posts Created ↔ Solutions Given</p>
+        <div class="val-r">r = 0.89</div>
+        <p class="interp">Strong positive</p>
+      </div>
+      <div class="corr-card">
+        <p class="pair">Days Visited ↔ Time Read (hrs)</p>
+        <div class="val-r">r = 0.87</div>
+        <p class="interp">Strong positive</p>
+      </div>
+      <div class="corr-card">
+        <p class="pair">Likes Given ↔ Likes Received</p>
+        <div class="val-r">r = 0.87</div>
+        <p class="interp">Strong reciprocity</p>
+      </div>
+      <div class="corr-card">
+        <p class="pair">Time Read ↔ Likes Received</p>
+        <div class="val-r">r = 0.68</div>
+        <p class="interp">Moderate positive</p>
+      </div>
+      <div class="corr-card">
+        <p class="pair">Days Visited ↔ Posts Created</p>
+        <div class="val-r">r = 0.52</div>
+        <p class="interp">Moderate positive</p>
+      </div>
+    </div>
+
+    <div class="insight-grid mt-8">
+      <div class="insight-card blue">
+        <span class="insight-icon">📈</span>
+        <h3>Write More, Receive More</h3>
+        <div class="big-num">r = 0.96</div>
+        <p>The near-perfect correlation between post count and likes received confirms the
+           obvious but important truth: the forum rewards generosity of knowledge.
+           The more you contribute, the more you are recognised.</p>
+      </div>
+      <div class="insight-card purple">
+        <span class="insight-icon">🔄</span>
+        <h3>Reciprocal Appreciation</h3>
+        <div class="big-num">r = 0.87</div>
+        <p>Users who give likes also receive likes (r = 0.87). This hints at a positive
+           social dynamic: gratitude is not one-directional.
+           Engaged users cultivate engaged connections.</p>
+      </div>
+      <div class="insight-card teal">
+        <span class="insight-icon">🕰️</span>
+        <h3>Consistency Over Intensity</h3>
+        <div class="big-num">r = 0.87</div>
+        <p>Days visited correlates strongly with total reading time (0.87) and moderately
+           with post creation (0.52). Longevity — showing up day after day — matters
+           more than any single marathon session.</p>
+      </div>
+      <div class="insight-card pink">
+        <span class="insight-icon">🎯</span>
+        <h3>Solutions Are Rare, Valuable</h3>
+        <div class="big-num">1,502</div>
+        <p>Only 1,502 solutions were marked across 500 users. Solving problems is the
+           hardest form of contribution — it demands both mastery and the willingness
+           to take time away from your own work.</p>
+      </div>
+      <div class="insight-card green">
+        <span class="insight-icon">📚</span>
+        <h3>The Reading Economy</h3>
+        <div class="big-num">8,128 hrs</div>
+        <p>The community spent over 8,000 hours reading — almost a full year of
+           continuous study. Even silent readers and lurkers benefit from the
+           accumulated labour of others.</p>
+      </div>
+    </div>
+
+    <div class="chart-grid mt-8">
+      <div class="chart-card">
+        <img src="output/time_vs_likes.png" alt="Time Read vs Likes Received" loading="lazy"/>
+        <p class="chart-caption">Fig 5 — Time spent reading vs. likes received. Power users (pink) clearly cluster at higher engagement across both axes.</p>
+      </div>
+      <div class="chart-card">
+        <img src="output/days_vs_posts.png" alt="Days Visited vs Posts Created" loading="lazy"/>
+        <p class="chart-caption">Fig 6 — Forum tenure (days visited) vs. posts created, coloured by trust level. Higher trust users dominate the upper-right corner.</p>
+      </div>
+      <div class="chart-card chart-full">
+        <img src="output/correlation_heatmap.png" alt="Correlation Heatmap" loading="lazy"/>
+        <p class="chart-caption">Fig 7 — Full correlation heatmap. Warm colours = strong positive relationships. Posts ↔ likes and days ↔ time_read stand out immediately.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════  CHAPTER 5 · POWER USERS  -->
+  <section id="power-users">
+    <div class="section-label">Chapter Five</div>
+    <span class="chapter-num">05</span>
+    <h2 class="section-title">The <span>Power Users</span> — A Hall of Fame</h2>
+    <div class="section-body">
+      <p>
+        At the very top of the engagement distribution sit 25 individuals who, by composite
+        scoring across posts, likes, days visited, and solutions, outpace the rest of the
+        community by a significant margin. They are not just active; they are the
+        <em>connective tissue</em> of the forum.
+      </p>
+    </div>
+
+    <div class="leaderboard">
+      <div class="lb-header">
+        <div>#</div><div>User</div>
+        <div style="text-align:right">Posts</div>
+        <div style="text-align:right">Likes</div>
+        <div style="text-align:right">Solutions</div>
+        <div style="text-align:right">Days</div>
+      </div>
+
+      <div class="lb-row">
+        <div class="lb-rank gold">🥇</div>
+        <div><div class="lb-uname">sayan</div><div class="lb-role">Sayan Ghosh · Leader</div></div>
+        <div class="lb-num"><strong>2,835</strong></div>
+        <div class="lb-num"><strong>2,374</strong></div>
+        <div class="lb-num"><strong>577</strong></div>
+        <div class="lb-num"><strong>847</strong></div>
+      </div>
+      <div class="lb-row">
+        <div class="lb-rank silver">🥈</div>
+        <div><div class="lb-uname">sejal</div><div class="lb-role">Sejal Anand · Community-TA</div></div>
+        <div class="lb-num"><strong>1,466</strong></div>
+        <div class="lb-num"><strong>1,244</strong></div>
+        <div class="lb-num"><strong>67</strong></div>
+        <div class="lb-num"><strong>1,049</strong></div>
+      </div>
+      <div class="lb-row">
+        <div class="lb-rank bronze">🥉</div>
+        <div><div class="lb-uname">biswasabhik999</div><div class="lb-role">Abhik Biswas · Member</div></div>
+        <div class="lb-num"><strong>1,087</strong></div>
+        <div class="lb-num"><strong>1,484</strong></div>
+        <div class="lb-num"><strong>176</strong></div>
+        <div class="lb-num"><strong>703</strong></div>
+      </div>
+      <div class="lb-row">
+        <div class="lb-rank rest">4</div>
+        <div><div class="lb-uname">cacklouncle</div><div class="lb-role">Piyush Agrawal · Alumnus</div></div>
+        <div class="lb-num"><strong>1,062</strong></div>
+        <div class="lb-num"><strong>764</strong></div>
+        <div class="lb-num"><strong>106</strong></div>
+        <div class="lb-num"><strong>1,676</strong></div>
+      </div>
+      <div class="lb-row">
+        <div class="lb-rank rest">5</div>
+        <div><div class="lb-uname">SahuUtkarsh03</div><div class="lb-role">Utkarsh Sahu · Member</div></div>
+        <div class="lb-num"><strong>1,348</strong></div>
+        <div class="lb-num"><strong>676</strong></div>
+        <div class="lb-num"><strong>95</strong></div>
+        <div class="lb-num"><strong>718</strong></div>
+      </div>
+      <div class="lb-row">
+        <div class="lb-rank rest">6</div>
+        <div><div class="lb-uname">VishwaSP</div><div class="lb-role">Vishwanath S · Basic</div></div>
+        <div class="lb-num"><strong>709</strong></div>
+        <div class="lb-num"><strong>492</strong></div>
+        <div class="lb-num"><strong>29</strong></div>
+        <div class="lb-num"><strong>396</strong></div>
+      </div>
+      <div class="lb-row">
+        <div class="lb-rank rest">7</div>
+        <div><div class="lb-uname">Kumar9</div><div class="lb-role">kumar · Basic</div></div>
+        <div class="lb-num"><strong>346</strong></div>
+        <div class="lb-num"><strong>460</strong></div>
+        <div class="lb-num"><strong>15</strong></div>
+        <div class="lb-num"><strong>629</strong></div>
+      </div>
+      <div class="lb-row">
+        <div class="lb-rank rest">8</div>
+        <div><div class="lb-uname">Indranil08</div><div class="lb-role">Indranil Bhattacharyya · Course TA</div></div>
+        <div class="lb-num"><strong>177</strong></div>
+        <div class="lb-num"><strong>265</strong></div>
+        <div class="lb-num"><strong>18</strong></div>
+        <div class="lb-num"><strong>970</strong></div>
+      </div>
+      <div class="lb-row">
+        <div class="lb-rank rest">9</div>
+        <div><div class="lb-uname">bimleshkanth</div><div class="lb-role">Bimlesh Kanth · Basic</div></div>
+        <div class="lb-num"><strong>266</strong></div>
+        <div class="lb-num"><strong>184</strong></div>
+        <div class="lb-num"><strong>8</strong></div>
+        <div class="lb-num"><strong>920</strong></div>
+      </div>
+      <div class="lb-row">
+        <div class="lb-rank rest">10</div>
+        <div><div class="lb-uname">HumanshuDG</div><div class="lb-role">Humanshu · Basic</div></div>
+        <div class="lb-num"><strong>226</strong></div>
+        <div class="lb-num"><strong>240</strong></div>
+        <div class="lb-num"><strong>7</strong></div>
+        <div class="lb-num"><strong>706</strong></div>
+      </div>
+    </div>
+
+    <div class="pull-quote">
+      "Sayan Ghosh alone — one user out of 500 — has written <strong>2,835 posts</strong>, earned
+       <strong>2,374 likes</strong>, and resolved <strong>577 questions</strong>.
+       In a physical classroom, this person would be called the best TA in the department.
+       Here, they are a voluntarily chosen community pillar."
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════  CHAPTER 6 · CONCLUSION  -->
+  <section id="conclusion">
+    <div class="section-label">Chapter Six</div>
+    <span class="chapter-num">06</span>
+    <h2 class="section-title">What the Data <span>Tells Us</span></h2>
+    <div class="section-body">
+      <p>
+        Pull back from the individual and look at the shape of the whole. What does this data
+        reveal about the culture of peer learning at IITM?
+      </p>
+      <p>
+        <strong>First, it reveals asymmetric generosity.</strong> A small group of Power Users —
+        just 5% of the community — disproportionately drives the forum's value. They write
+        the most, solve the most, and stay the longest. The forum survives on their
+        consistent, voluntary effort.
+      </p>
+      <p>
+        <strong>Second, it reveals a healthy reciprocity loop.</strong> The remarkably strong
+        correlation between likes given and likes received (r = 0.87) suggests an ecosystem
+        where appreciation flows back to those who give it. This positive feedback loop is
+        what keeps contributors motivated.
+      </p>
+      <p>
+        <strong>Third, it reveals the hidden value of silent users.</strong> Those 37 silent readers
+        and 64 lurkers are not freeloaders — they represent the students who needed the most
+        help but lacked the confidence or time to ask. The fact that 8,128 hours of reading
+        happened proves the forum served them too, even if invisibly.
+      </p>
+      <p>
+        <strong>Finally, it reveals that tenure beats intensity.</strong> The highest-engaged
+        users are not those who had a single burst of activity — they are the ones who showed
+        up day after day. Consistency, not heroics, is what builds a learning community.
+      </p>
+    </div>
+
+    <div class="conclusion">
+      <h2>The Forum Is the Classroom</h2>
+      <p>
+        In a world where education is increasingly asynchronous and remote, data like this
+        matters. The IITM Discourse community is not just a Q&A board — it is an emergent,
+        self-organising learning institution.
+        <br><br>
+        Its currency is knowledge. Its architecture is trust. Its greatest asset is the
+        small percentage of students who chose, without obligation, to make the community
+        better for everyone else.
+      </p>
+      <div class="conclusion-stats">
+        <div class="c-stat"><span class="cv">27,097</span> Posts + Topics</div>
+        <div class="c-stat"><span class="cv">8,128 hrs</span> Reading</div>
+        <div class="c-stat"><span class="cv">1,502</span> Problems Solved</div>
+        <div class="c-stat"><span class="cv">17,752</span> Likes Given</div>
+        <div class="c-stat"><span class="cv">500</span> Lives Touched</div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /page-wrap -->
+
+<footer>
+  <p>
+    <strong>Behind the Screens: The Pulse of the IITM Discourse Community</strong><br>
+    Data Story generated from <code>combined.json</code> · 500 user profiles ·
+    Analysis by <strong>analyze.py</strong> · Visualised Feb 2026
+  </p>
+</footer>
+
+</body>
+</html>
